@@ -1,54 +1,13 @@
-
-
-// import React from "react";
-// import { Link } from "react-router-dom";
-
-// const Home = () => {
-//   return (
-//     <div className="flex flex-col items-center justify-center h-screen space-y-6">
-//       <h1 className="text-2xl font-bold">Smart Healthcare Assistant</h1>
-
-//       {/* Patient options */}
-//       <div className="space-x-4">
-//         <span className="font-semibold">Patient:</span>
-//         <Link
-//           to="/register"
-//           className="bg-blue-500 text-white px-4 py-2 rounded"
-//         >
-//           Register
-//         </Link>
-//         <Link
-//           to="/login"
-//           className="bg-green-500 text-white px-4 py-2 rounded"
-//         >
-//           Login
-//         </Link>
-//       </div>
-
-//       {/* Doctor options */}
-//       <div className="space-x-4">
-//         <span className="font-semibold">Doctor:</span>
-//         <Link
-//           to="/doctor/register"
-//           className="bg-blue-700 text-white px-4 py-2 rounded"
-//         >
-//           Register
-//         </Link>
-//         <Link
-//           to="/doctor/login"
-//           className="bg-green-700 text-white px-4 py-2 rounded"
-//         >
-//           Login
-//         </Link>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Home;
+;
 
 import React from "react";
 import { Link } from "react-router-dom";
+
+
+
+  const token = localStorage.getItem("patientToken"); // only for patients
+
+  console.log("login routes => ",token)
 
 const PatientSection = () => (
   <div className="flex flex-col items-center text-center space-y-6 bg-white bg-opacity-80 rounded-2xl shadow-xl p-10 hover:scale-105 transform transition">

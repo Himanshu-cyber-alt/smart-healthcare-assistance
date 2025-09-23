@@ -1,42 +1,4 @@
-// import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { useDispatch } from "react-redux";
-// import { loginPatient } from "../features/auth/authSlice";
 
-// const Login = () => {
-//   const [phone, setPhone] = useState("+917049468290");
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-
-//   const handleLogin = async () => {
-//     try {
-//       await dispatch(loginPatient(phone)).unwrap();
-     
-//       navigate("/dashboard");
-//     } catch (err) {
-//       console.error(err);
-//       alert(err || "Login failed ❌");
-//     }
-//   };
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-xl font-bold">Patient Login</h2>
-//       <input
-//         type="text"
-//         placeholder="+91XXXXXXXXXX"
-//         value={phone}
-//         onChange={(e) => setPhone(e.target.value)}
-//         className="border p-2 m-2"
-//       />
-//       <button onClick={handleLogin} className="bg-blue-500 text-white p-2">
-//         Login
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default Login;
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,20 +6,42 @@ import { useDispatch } from "react-redux";
 import { loginPatient } from "../features/auth/authSlice";
 
 const Login = () => {
-  const [phone, setPhone] = useState("+91");
+  const [phone, setPhone] = useState("+918965890532");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // const handleLogin = async () => {
+  //   try {
+  //     await dispatch(loginPatient(phone)).unwrap();
+  //      localStorage.setItem("patientMobile",phone);
+  
+  //     navigate("/dashboard");
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert(err || "Login failed ❌");
+  //   }
+  // };
+
+
+ 
+
   const handleLogin = async () => {
-    try {
-      await dispatch(loginPatient(phone)).unwrap();
-       localStorage.setItem("patientMobile",phone);
-      navigate("/dashboard");
-    } catch (err) {
-      console.error(err);
-      alert(err || "Login failed ❌");
-    }
-  };
+  try {
+    const response = await dispatch(loginPatient(phone)).unwrap(); // store the returned payload
+    localStorage.setItem("patientMobile", phone);
+
+    console.log(response.token)
+    // Make sure your backend returns a token in response
+    localStorage.setItem("patientToken", response.token); 
+
+
+    navigate("/dashboard");
+  } catch (err) {
+    console.error(err);
+    alert(err || "Login failed ❌");
+  }
+};
+
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 to-sky-100">
@@ -99,3 +83,5 @@ const Login = () => {
 };
 
 export default Login;
+
+

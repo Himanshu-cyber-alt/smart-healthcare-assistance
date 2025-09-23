@@ -25,12 +25,14 @@ const Navbar = () => {
             >
               Doctors
             </Link>
-            {/* <Link
-              to="/appointments"
+
+            <Link
+              to="/assistant"
               className="hover:bg-blue-700 px-3 py-2 rounded-md"
             >
-              Appointments
-            </Link> */}
+              ASK AI
+            </Link>
+            
             <Link
               to="/profile"
               className="hover:bg-blue-700 px-3 py-2 rounded-md"
