@@ -1,58 +1,4 @@
 
-// import React, { useState } from "react";
-// import axios from "axios";
-// import { sendOtp } from "../firebase/firebase";
-// import { useNavigate } from "react-router-dom";
-
-// const PatientRegister = () => {
-//   const [phone, setPhone] = useState("+917049468290");
-//   const navigate = useNavigate();
-
-//   const handleSendOtp = async () => {
-//     try {
-//       // check if patient already exists
-//       const res = await axios.post("http://localhost:5000/api/patients/login", {
-//         mobile_number: phone,
-//       });
-
-//       if (res.data.exists) {
-//         alert("User already registered. Redirecting to login...");
-//         navigate("/login");
-//       } else {
-//         // not found → send OTP
-//         const result = await sendOtp(phone);
-//         window.confirmationResult = result;
-//         navigate("/verify-otp", { state: { phone } }); // ✅ fixed route
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       alert("Something went wrong");
-//     }
-//   };
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-xl font-bold">Patient Register</h2>
-//       <input
-//         type="text"
-//         placeholder="+91XXXXXXXXXX"
-//         value={phone}
-//         onChange={(e) => setPhone(e.target.value)}
-//         className="border p-2 m-2"
-//       />
-//       <button
-//         onClick={handleSendOtp}
-//         className="bg-blue-500 text-white p-2 rounded"
-//       >
-//         Send OTP
-//       </button>
-
-//       <div id="recaptcha-container"></div>
-//     </div>
-//   );
-// };
-
-// export default PatientRegister;
 
 
 
@@ -69,35 +15,7 @@ const PatientRegister = () => {
   const navigate = useNavigate();
 
 
-//   const handleSendOtp = async () => {
-//     try {
-//       // check if patient already exists
-     
-//       const res = await axios.post("http://localhost:5000/api/patients/login", {
-//         mobile_number: phone,
-//       });
 
-   
-
-//     const data = await res.json();
-//  console.log("hello")
-
-//       if (data.exists) {
-//         alert("User already registered. Redirecting to login...");
-//         navigate("/login");
-//       } else {
-//         // not found → send OTP
-//         const result = await sendOtp(phone);
-//         window.alert(result)
-//         window.confirmationResult = result;
-//         navigate("/verify-otp",{ state: { phone } }); // ✅ fixed route
-//       }
-//     } catch (err) {
-//        console.error("Axios error:", err.response ? err.response.data : err.message);
-//       console.error(err);
-//       alert("Something went wrong");
-//     }
-//   };
 
 const handleSendOtp = async () => {
   try {

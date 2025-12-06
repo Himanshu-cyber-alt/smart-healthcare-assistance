@@ -26,10 +26,14 @@ const PatientOtpVerify = () => {
       // ✅ Register patient in backend
       const res = await dispatch(registerPatient(phone)).unwrap();
 
+      console.log(res.patient_id)
+
+      const patientId = res.patient_id;
+
       alert("OTP verified and patient registered!");
 
       // ✅ Redirect to profile page with patient_id
-      navigate("/profile", { state: {  } });
+      navigate("/take-info", { state: { phone, patientId  } });
 
     } catch (err) {
       console.error("OTP verification error:", err);

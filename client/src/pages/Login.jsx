@@ -6,36 +6,32 @@ import { useDispatch } from "react-redux";
 import { loginPatient } from "../features/auth/authSlice";
 
 const Login = () => {
-  const [phone, setPhone] = useState("+918965890532");
+  const [phone, setPhone] = useState("+911234567899");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // const handleLogin = async () => {
-  //   try {
-  //     await dispatch(loginPatient(phone)).unwrap();
-  //      localStorage.setItem("patientMobile",phone);
-  
-  //     navigate("/dashboard");
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert(err || "Login failed ❌");
-  //   }
-  // };
 
 
  
 
   const handleLogin = async () => {
   try {
-    const response = await dispatch(loginPatient(phone)).unwrap(); // store the returned payload
+    const response = await dispatch(loginPatient(phone)).unwrap(); 
+    
+    // store the returned payload
+
+    console.log("Patient data => ",response.patient.patient_id)
     localStorage.setItem("patientMobile", phone);
 
     console.log(response.token)
     // Make sure your backend returns a token in response
     localStorage.setItem("patientToken", response.token); 
+    
+const  patientId = response.patient.patient_id;
 
+    localStorage.setItem("patient_id",patientId)
 
-    navigate("/dashboard");
+       
+    navigate("/dashboard" ,{ state: {  patientId  } });
   } catch (err) {
     console.error(err);
     alert(err || "Login failed ❌");

@@ -1,21 +1,11 @@
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import {
-//   createPatientProfile,
-//   getPatientProfile,
-//   updatePatientProfile,
-// } from "../features/auth/authSlice";
+// import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
-// import { User, Calendar, Ruler, Weight, Droplet, MapPin, FileText, Save } from 'lucide-react';
 // import Navbar from "../components/Navbar";
 
-// const Profile = () => {
-//   const dispatch = useDispatch();
+// export default function Profile() {
 //   const navigate = useNavigate();
-//   const { user, profile } = useSelector((state) => state.auth);
-
-//   const [formData, setFormData] = useState({
-//     full_name: "",
+//   const [profile, setProfile] = useState({
+//     first_name: "",
 //     gender: "",
 //     date_of_birth: "",
 //     height_cm: "",
@@ -24,447 +14,274 @@
 //     address: "",
 //     existing_conditions: "",
 //   });
+//   const [loading, setLoading] = useState(true);
+//   const patientId = localStorage.getItem("patient_id");
 
-//   const [isSuccess, setIsSuccess] = useState(false);
-
-//   // Fetch profile when user is available
+//   // Fetch profile
 //   useEffect(() => {
-//     if (!user) {
-//       navigate("/login");
-//       return;
-//     }
-
-//     if (user.patient_id) {
-//       dispatch(getPatientProfile(user.patient_id)).catch(() => {
-//         // profile may not exist yet
-//       });
-//     }
-//   }, [user, dispatch, navigate]);
-
-//   // Populate form when profile loads
-//   useEffect(() => {
-//     if (profile) {
-//       setFormData({
-//         full_name: profile.full_name || "",
-//         gender: profile.gender || "",
-//         date_of_birth: profile.date_of_birth
-//           ? profile.date_of_birth.split("T")[0]
-//           : "",
-//         height_cm: profile.height_cm || "",
-//         weight_kg: profile.weight_kg || "",
-//         blood_group: profile.blood_group || "",
-//         address: profile.address || "",
-//         existing_conditions: profile.existing_conditions || "",
-//       });
-//     }
-//   }, [profile]);
+//     const fetchProfile = async () => {
+//       try {
+//         const res = await fetch(`http://localhost:5000/api/patients/${patientId}`);
+//         const data = await res.json();
+//         setProfile(data || {});
+//       } catch (err) {
+//         console.error(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     if (patientId) fetchProfile();
+//   }, [patientId]);
 
 //   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData((prev) => ({ ...prev, [name]: value }));
+//     setProfile({ ...profile, [e.target.name]: e.target.value });
 //   };
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setIsSuccess(false);
-
+//   const handleUpdate = async () => {
 //     try {
-//       if (profile && profile.patient_id === user.patient_id) {
-//         // ✅ Update existing profile
-//         await dispatch(
-//           updatePatientProfile({ patient_id: profile.patient_id, profileData: formData })
-//         ).unwrap();
-//       } else {
-//         // ✅ Create new profile
-//         await dispatch(
-//           createPatientProfile({ patient_id: user.patient_id, ...formData })
-//         ).unwrap();
-//       }
+//       const res = await fetch(`http://localhost:5000/api/patients/${patientId}`, {
+//         method: "PUT",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(profile),
+//       });
+//       const data = await res.json();
 
-//       setIsSuccess(true);
-//       setTimeout(() => setIsSuccess(false), 5000);
-
+//       console.log(data)
+//       alert("Profile updated successfully!");
+//       setProfile(data);
 //     } catch (err) {
-//       console.error("Profile save error:", err);
-//       alert("Profile save error: " + (err?.message || "Unknown error"));
+//       console.error(err);
+//       alert("Failed to update profile.");
 //     }
 //   };
 
-  // return (
-  //   <>
-  //     <Navbar />
-  //     <div className="min-h-screen py-12 px-4">
-  //       <div className="max-w-2xl mx-auto">
-  //         <h1 className="text-4xl font-bold mb-6">Patient Profile</h1>
+//   if (loading) return <p className="text-center mt-20">Loading...</p>;
 
-  //         <form onSubmit={handleSubmit} className="space-y-6">
-  //           <input
-  //             name="full_name"
-  //             placeholder="Full name"
-  //             value={formData.full_name}
-  //             onChange={handleChange}
-  //             className="w-full border p-2 rounded"
-  //             required
-  //           />
-
-  //           <select
-  //             name="gender"
-  //             value={formData.gender}
-  //             onChange={handleChange}
-  //             required
-  //             className="w-full border p-2 rounded"
-  //           >
-  //             <option value="">Select gender</option>
-  //             <option value="Male">Male</option>
-  //             <option value="Female">Female</option>
-  //             <option value="Other">Other</option>
-  //           </select>
-
-  //           <input
-  //             type="date"
-  //             name="date_of_birth"
-  //             value={formData.date_of_birth}
-  //             onChange={handleChange}
-  //             className="w-full border p-2 rounded"
-  //           />
-
-  //           <input
-  //             type="number"
-  //             name="height_cm"
-  //             placeholder="Height (cm)"
-  //             value={formData.height_cm}
-  //             onChange={handleChange}
-  //             className="w-full border p-2 rounded"
-  //           />
-
-  //           <input
-  //             type="number"
-  //             name="weight_kg"
-  //             placeholder="Weight (kg)"
-  //             value={formData.weight_kg}
-  //             onChange={handleChange}
-  //             className="w-full border p-2 rounded"
-  //           />
-
-  //           <input
-  //             name="blood_group"
-  //             placeholder="Blood group"
-  //             value={formData.blood_group}
-  //             onChange={handleChange}
-  //             className="w-full border p-2 rounded"
-  //           />
-
-  //           <textarea
-  //             name="address"
-  //             placeholder="Address"
-  //             value={formData.address}
-  //             onChange={handleChange}
-  //             className="w-full border p-2 rounded"
-  //           />
-
-  //           <textarea
-  //             name="existing_conditions"
-  //             placeholder="Existing conditions (optional)"
-  //             value={formData.existing_conditions}
-  //             onChange={handleChange}
-  //             className="w-full border p-2 rounded"
-  //           />
-
-  //           <button
-  //             type="submit"
-  //             className="w-full bg-blue-600 text-white p-3 rounded font-bold"
-  //           >
-  //             {profile && profile.patient_id === user.patient_id
-  //               ? "Update Profile"
-  //               : "Save Profile"}
-  //           </button>
-  //         </form>
-
-  //         {isSuccess && (
-  //           <p className="mt-4 text-green-600 font-semibold">
-  //             Profile saved successfully!
-  //           </p>
-  //         )}
-  //       </div>
-  //     </div>
-  //   </>
-  // );
+//   return (
+//     <div className="min-h-screen bg-gray-50">
+//       <Navbar />
+//       <div className="max-w-3xl mx-auto p-6">
+//         <h1 className="text-2xl font-bold mb-6">Update Profile</h1>
+//         <div className="space-y-4">
+//           {[
+//             { label: "Full Name", name: "first_name" },
+//             { label: "Gender", name: "gender" },
+//             { label: "Date of Birth", name: "dob", type: "date" },
+//             { label: "Height (cm)", name: "height", type: "number" },
+//             { label: "Weight (kg)", name: "weight", type: "number" },
+//             { label: "Blood Group", name: "blood_group" },
+//             { label: "Address", name: "address" },
+//             { label: "Existing Conditions", name: "symptoms" },
+//           ].map((field) => (
+//             <div key={field.name} className="flex flex-col">
+//               <label className="text-gray-700 mb-1">{field.label}</label>
+//               <input
+//                 type={field.type || "text"}
+//                 name={field.name}
+//                 value={profile[field.name] || ""}
+//                 onChange={handleChange}
+//                 className="p-2 border rounded-md"
+//               />
+//             </div>
+//           ))}
+//         </div>
+//         <button
+//           onClick={handleUpdate}
+//           className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+//         >
+//           Update Profile
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
 
 
 
-
-
-
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  createPatientProfile,
-  getPatientProfile,
-  updatePatientProfile,
-} from "../features/auth/authSlice";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Calendar, Ruler, Weight, Droplet, MapPin, FileText, Save } from 'lucide-react';
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
+import { User, HeartPulse, MapPin, Calendar } from "lucide-react";
 
-const Profile = () => {
-  const dispatch = useDispatch();
+export default function Profile() {
   const navigate = useNavigate();
-  const { user, profile } = useSelector((state) => state.auth);
-
-  const [formData, setFormData] = useState({
-    full_name: "",
+  const [profile, setProfile] = useState({
+    first_name: "",
     gender: "",
-    date_of_birth: "",
-    height_cm: "",
-    weight_kg: "",
+    dob: "",
+    height: "",
+    weight: "",
     blood_group: "",
     address: "",
-    existing_conditions: "",
+    symptoms: "",
   });
+  const [loading, setLoading] = useState(true);
+  const patientId = localStorage.getItem("patient_id");
 
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  // Fetch profile when user is available
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    if (user.patient_id) {
-      dispatch(getPatientProfile(user.patient_id)).catch(() => {
-        // profile may not exist yet
-      });
-    }
-  }, [user, dispatch, navigate]);
-
-  // Populate form when profile loads
-  useEffect(() => {
-    if (profile) {
-      setFormData({
-        full_name: profile.full_name || "",
-        gender: profile.gender || "",
-        date_of_birth: profile.date_of_birth
-          ? profile.date_of_birth.split("T")[0]
-          : "",
-        height_cm: profile.height_cm || "",
-        weight_kg: profile.weight_kg || "",
-        blood_group: profile.blood_group || "",
-        address: profile.address || "",
-        existing_conditions: profile.existing_conditions || "",
-      });
-    }
-  }, [profile]);
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/patients/${patientId}`);
+        const data = await res.json();
+        setProfile(data || {});
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (patientId) fetchProfile();
+  }, [patientId]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSuccess(false);
-
+  const handleUpdate = async () => {
     try {
-      if (profile && profile.patient_id === user.patient_id) {
-        // ✅ Update existing profile
-        await dispatch(
-          updatePatientProfile({ patient_id: profile.patient_id, profileData: formData })
-        ).unwrap();
-      } else {
-        // ✅ Create new profile
-        await dispatch(
-          createPatientProfile({ patient_id: user.patient_id, ...formData })
-        ).unwrap();
-      }
-
-      setIsSuccess(true);
-      setTimeout(() => setIsSuccess(false), 5000);
-
+      const res = await fetch(`http://localhost:5000/api/patients/${patientId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      });
+      const data = await res.json();
+      alert("✅ Profile updated successfully!");
+      setProfile(data);
     } catch (err) {
-      console.error("Profile save error:", err);
-      alert("Profile save error: " + (err?.message || "Unknown error"));
+      console.error(err);
+      alert("❌ Failed to update profile.");
     }
   };
 
- 
-
-
-return (
-  <>
-    <Navbar />
-    <div
-      className="min-h-screen py-12 px-4 bg-cover bg-center relative"
-      style={{
-        backgroundImage:
-          "url('https://images.pexels.com/photos/7722680/pexels-photo-7722680.jpeg')",
-      }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/30"></div>
-
-      {/* Form Card with glassmorphism */}
-      <div className="relative max-w-2xl mx-auto bg-white/40 backdrop-blur-md p-8 rounded-xl shadow-lg">
-        <h1 className="text-4xl font-bold mb-8 text-center text-gray-900">
-          Patient Profile
-        </h1>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-
-          {/* Full Name */}
-          <div>
-            <label className="block text-gray-800 font-medium mb-1">
-              Full Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="full_name"
-              placeholder="John Doe"
-              value={formData.full_name}
-              onChange={handleChange}
-              className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          {/* Gender */}
-          <div>
-            <label className="block text-gray-800 font-medium mb-1">
-              Gender <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          {/* Date of Birth */}
-          <div>
-            <label className="block text-gray-800 font-medium mb-1">
-              Date of Birth
-            </label>
-            <input
-              type="date"
-              name="date_of_birth"
-              value={formData.date_of_birth}
-              onChange={handleChange}
-              className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Height & Weight */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-800 font-medium mb-1">
-                Height (cm)
-              </label>
-              <input
-                type="number"
-                name="height_cm"
-                placeholder="170"
-                value={formData.height_cm}
-                onChange={handleChange}
-                className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-800 font-medium mb-1">
-                Weight (kg)
-              </label>
-              <input
-                type="number"
-                name="weight_kg"
-                placeholder="65"
-                value={formData.weight_kg}
-                onChange={handleChange}
-                className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          {/* Blood Group */}
-          <div>
-            <label className="block text-gray-800 font-medium mb-1">
-              Blood Group
-            </label>
-            <select
-              name="blood_group"
-              value={formData.blood_group}
-              onChange={handleChange}
-              className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select blood group</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-            </select>
-          </div>
-
-          {/* Address */}
-          <div>
-            <label className="block text-gray-800 font-medium mb-1">
-              Address
-            </label>
-            <textarea
-              name="address"
-              placeholder="123 Main St, City, Country"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Existing Conditions */}
-          <div>
-            <label className="block text-gray-800 font-medium mb-1">
-              Existing Conditions (Optional)
-            </label>
-            <textarea
-              name="existing_conditions"
-              placeholder="Diabetes, Hypertension, etc."
-              value={formData.existing_conditions}
-              onChange={handleChange}
-              className="w-full border border-gray-300/60 p-3 rounded-lg bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-bold transition-colors"
-          >
-            {profile && profile.patient_id === user.patient_id
-              ? "Update Profile"
-              : "Save Profile"}
-          </button>
-        </form>
-
-        {/* Success Message */}
-        {isSuccess && (
-          <p className="mt-4 text-green-600 font-semibold text-center">
-            Profile saved successfully!
-          </p>
-        )}
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-gray-600">
+        Loading profile...
       </div>
+    );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900 font-sans">
+      <Navbar />
+
+      {/* Header */}
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-8 py-16 border-b border-gray-200 mt-4">
+        <h1 className="text-3xl font-semibold tracking-tight mb-2 sm:mb-0">
+           Update Profile
+        </h1>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="text-sm font-medium text-gray-500 hover:text-gray-800 transition"
+        >
+          ← Back to Dashboard
+        </button>
+      </header>
+
+      {/* Form Content */}
+      <main className="max-w-6xl mx-auto px-6 md:px-12 py-12 space-y-12">
+        {/* Personal Info Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <User className="text-gray-500" />
+            <h2 className="text-xl font-semibold text-gray-800">Personal Information</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { label: "Full Name", name: "first_name" },
+              { label: "Gender", name: "gender" },
+              { label: "Date of Birth", name: "dob", type: "date" },
+            ].map((field) => (
+              <div key={field.name}>
+                <label className="text-gray-600 text-sm font-medium mb-1 block">
+                  {field.label}
+                </label>
+                <input
+                  type={field.type || "text"}
+                  name={field.name}
+                  value={profile[field.name] || ""}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Health Info Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <HeartPulse className="text-gray-500" />
+            <h2 className="text-xl font-semibold text-gray-800">Health Information</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { label: "Height (cm)", name: "height", type: "number" },
+              { label: "Weight (kg)", name: "weight", type: "number" },
+              { label: "Blood Group", name: "blood_group" },
+              { label: "Existing Conditions", name: "symptoms" },
+            ].map((field) => (
+              <div key={field.name}>
+                <label className="text-gray-600 text-sm font-medium mb-1 block">
+                  {field.label}
+                </label>
+                <input
+                  type={field.type || "text"}
+                  name={field.name}
+                  value={profile[field.name] || ""}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Address Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <MapPin className="text-gray-500" />
+            <h2 className="text-xl font-semibold text-gray-800">Address Details</h2>
+          </div>
+
+          <textarea
+            name="address"
+            value={profile.address || ""}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none h-32 resize-none"
+            placeholder="Enter your address..."
+          />
+        </motion.div>
+
+        {/* Save Button */}
+        <div className="flex justify-center">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleUpdate}
+            className="px-10 py-4 rounded-full bg-black text-white font-medium text-lg hover:bg-gray-800 transition shadow-lg"
+          >
+             Save Changes
+          </motion.button>
+        </div>
+      </main>
     </div>
-  </>
-);
-
-
-};
-
-
-
-export default Profile;
+  );
+}

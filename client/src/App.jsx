@@ -1,58 +1,5 @@
 
 
-// import React from "react";
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import ProtectedRoute from "./components/ProtectedRoute";
-
-// import Home from "./pages/Home";
-
-// // patient pages
-// import PatientRegister from "./pages/PatientRegister";
-// import PatientOtpVerify from "./pages/PatientOtpVerify";
-// import Login from "./pages/Login";
-// import Profile from "./pages/Profile";
-// import PatientDashboard from "./pages/PatientDashboard";
-// import Doctors from "./pages/Doctors";
-// import PatientVideoCall from "./pages/PatientVideoCall"; // <-- Add this
-
-// // doctor pages
-// import DoctorRegister from "./pages/DoctorRegister";
-// import DoctorLogin from "./pages/DoctorLogin";
-// import DoctorDashboard from "./pages/DoctorDashboard";
-// import AIAssistant from "./pages/AIAssistant";
-
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-
-//         {/* Patient routes */}
-//         <Route path="/register" element={<PatientRegister />} />
-//         <Route path="/verify-otp" element={<PatientOtpVerify />} />
-//         <Route path="/login" element={<Login />} />
-//         <Route path="/profile" element={<Profile />} />
-//         <Route path="/dashboard" element={<PatientDashboard />} />
-
-//         <Route path="/assistant" element = {<AIAssistant/>} /> 
-
-//         <Route path="/doctors" element={<Doctors />} />
-//         <Route path="/patientvideocall" element={<PatientVideoCall />} /> {/* Added route */}
-
-//         {/* Doctor routes */}
-//         <Route path="/doctor/register" element={<DoctorRegister />} />
-//         <Route path="/doctor/login" element={<DoctorLogin />} />
-//         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-//       </Routes>
-//     </Router>
-
-
-//   );
-// }
-
-// export default App;
-
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -65,16 +12,22 @@ import PatientOtpVerify from "./pages/PatientOtpVerify";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import PatientDashboard from "./pages/PatientDashboard";
-import Doctors from "./pages/Doctors";
+import Doctors from "./DoctorPages/Doctors";
 import PatientVideoCall from "./pages/PatientVideoCall";
 
 // doctor pages
-import DoctorRegister from "./pages/DoctorRegister";
-import DoctorLogin from "./pages/DoctorLogin";
-import DoctorDashboard from "./pages/DoctorDashboard";
+import DoctorRegister from "./DoctorPages/DoctorRegister";
+import DoctorLogin from "./DoctorPages/DoctorLogin";
+import DoctorDashboard from "./DoctorPages/DoctorDashboard";
 import AIAssistant from "./pages/AIAssistant";
+import Appointment from "./pages/AppointmentTab"
+import MyAppointment from "./pages/MyAppointment";
+import TakeInfo from "./pages/TakeInfo";
 
 function App() {
+
+  const id = localStorage.getItem("patient_id");
+
   return (
     <Router>
       <Routes>
@@ -87,15 +40,18 @@ function App() {
 
          <Route
           path="/dashboard"
-          element={
+          element={ 
             <ProtectedRoute>
               <PatientDashboard />
-            </ProtectedRoute>
+              </ProtectedRoute>
+          
           }
         />
 
 
         <Route path="/profile" element={<Profile />} />
+
+        <Route path = "/take-info" element={<TakeInfo/>} />
 
         {/* Protected patient routes */}
        
@@ -104,11 +60,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PatientVideoCall />
-            </ProtectedRoute>
+              </ProtectedRoute>
+          
           }
         />
 
         <Route path="/assistant" element={<AIAssistant />} />
+        <Route path="/appointment" element={<Appointment />} />
+        <Route path = "/myappointments" element = {<MyAppointment/>}/>
         <Route path="/doctors" element={<Doctors />} />
 
         {/* Doctor routes */}
