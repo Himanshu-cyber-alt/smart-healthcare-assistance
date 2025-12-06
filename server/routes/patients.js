@@ -10,6 +10,8 @@ const JWT_SECRET = "supersecretkey";
 router.post("/register", async (req, res) => {
   const { mobile_number } = req.body;
 
+ 
+
   console.log(mobile_number)
 
   if (!mobile_number) {
@@ -38,40 +40,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ✅ Login patient
-// ✅ Login patient
-// router.post("/login", async (req, res) => {
-//   const { mobile_number } = req.body;
 
-//   console.log(mobile_number)
-//   // ✅ Validate input
-//   if (!mobile_number || mobile_number.trim() === "") {
-//     return res.status(400).json({ error: "Mobile number is required" });
-//   }
-
-//   try {
-//     const result = await pool.query(
-//       "SELECT * FROM patients WHERE mobile_number = $1",
-//       [mobile_number]
-//     );
-
-//     if (result.rows.length === 0) {
-//       // not registered
-//        return res.status(404).json({ exists: false, success: false, error: "User not found" });
-  
-//     }
-
-//     // registered → login success
-//     return res.json({
-//       exists: true,
-//       success: true,
-//       patient: result.rows[0], // optional
-//     });
-//   } catch (err) {
-//     console.error("Login error:", err);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// });
 
 
 
