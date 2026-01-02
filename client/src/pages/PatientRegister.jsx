@@ -1,94 +1,156 @@
 
 
 
-
-
-
-import React, { useState } from "react";
-import axios from "axios";
-import { sendOtp } from "../firebase/firebase";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { registerPatient } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import { firebaseRegister } from "../features/auth/authSlice";
 
-
-const PatientRegister = () => {
-  const [phone, setPhone] = useState("+911234567899");
+export default function PatientRegister() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mobile, setMobile] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // const handleRegister = async () => {
+  //   try {
+  //     const res = await dispatch(
+  //       registerPatient({ email, password, mobile })
+  //     ).unwrap();
+
+  //     localStorage.setItem("patientToken", res.token);
+  //     localStorage.setItem("patient_id", res.patient.patient_id);
+  //     localStorage.setItem("patient_email", email);
+
+  //     navigate("/take-info", {
+  //       state: { patientId: res.patient.patient_id },
+  //     });
+  //   } catch (err) {
+  //     alert(err.message || "Registration failed");
+  //   }
+  // };
+
+
+ const handleRegister = async () => {
+    try {
+      const res = await dispatch(
+        registerPatient({ email, password })
+      ).unwrap();
+
+      localStorage.setItem("patientToken", res.token);
+      localStorage.setItem("patient_id", res.patient.patient_id);
+      localStorage.setItem("patient_email", email);
+
+      navigate("/take-info", {
+        state: { patientId: res.patient.patient_id },
+      });
+    } catch (err) {
+      alert(err.message || "Registration failed");
+    }
+  };
 
 
 
-const handleSendOtp = async () => {
+
+ const handleGoogleRegister = async () => {
   try {
-    const res = await fetch("http://localhost:5000/api/patients/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mobile_number: phone }),
-    });
+    const res = await dispatch(firebaseRegister({ email, password })).unwrap();
 
-    const data = await res.json();
-
-  
-
-    if (data.exists) {
-      alert("User already registered. Redirecting to login...");
-      navigate("/login");
-    } else {
-      const result = await sendOtp(phone);
-      window.confirmationResult = result;
-      navigate("/verify-otp", { state: { phone  } });
+      if(res.flag){
+    localStorage.setItem("token", res.token);
+    navigate("/take-info",{
+        state: { patientId: res.user.patient_id },
+      });
+    }else{
+      navigate('/login')
     }
   } catch (err) {
-    console.error(err);
-    alert("Something went wrong");
+    alert(err);
   }
-};
+ }
 
 
+ return (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-100 via-teal-100 to-sky-100" >
+    <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
 
-  return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 to-sky-100">
-      {/* Background image overlay */}
-   
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-20"
-        style={{
-          backgroundImage:
-            "url('https://images.pexels.com/photos/7722680/pexels-photo-7722680.jpeg')",
-        }}
-      ></div>
+     
+      
+      {/* Header */}
+      <h2 className="text-3xl font-bold text-gray-800 text-center">
+        Patient Registration
+      </h2>
+      <p className="text-sm text-gray-500 text-center mt-2">
+        Create your account to continue
+      </p>
 
-      {/* Card */}
-      <div className="relative z-10 bg-white bg-opacity-90 rounded-2xl shadow-xl p-10 max-w-md w-full text-center">
-        <h2 className="text-3xl font-bold text-green-700 mb-6">
-          Patient Register
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Enter your phone number to register and verify with OTP.
-        </p>
-
+      {/* Form */}
+      <div className="mt-8 space-y-4">
         <input
-          type="text"
-          placeholder="+91XXXXXXXXXX"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-6 focus:outline-none focus:ring-2 focus:ring-green-400"
+          type="email"
+          placeholder="Email address"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+          onChange={(e) => setEmail(e.target.value)}
         />
 
-        <button
-          onClick={handleSendOtp}
-          className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg shadow-md transition"
-        >
-          Send OTP
-        </button>
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-        {/* Firebase reCAPTCHA container */}
-        <div id="recaptcha-container" className="mt-4"></div>
+    
       </div>
-    </div>
-  );
-};
 
-export default PatientRegister;
+      {/* Register button */}
+      <button
+        onClick={handleRegister}
+        className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl shadow-md transition-all"
+      >
+        Create Account
+      </button>
+
+      {/* Divider */}
+      <div className="flex items-center my-6">
+        <div className="flex-grow h-px bg-gray-300" />
+        <span className="mx-3 text-gray-500 text-sm">OR</span>
+        <div className="flex-grow h-px bg-gray-300" />
+      </div>
+
+      {/* Google button */}
+      <button
+        onClick={handleGoogleRegister}
+        className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-100 transition"
+      >
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google"
+          className="w-5 h-5"
+        />
+        <span className="font-medium text-gray-700">
+          Sign up with Google
+        </span>
+      </button>
+
+      {/* Footer */}
+      <p className="text-center text-sm text-gray-500 mt-6">
+        Already have an account?{" "}
+        <span
+          onClick={() => navigate("/login")}
+          className="text-emerald-600 font-semibold cursor-pointer hover:underline"
+        >
+          Login
+        </span>
+      </p>
+    </div>
+  </div>
+);
+
+}
+
 
 
 

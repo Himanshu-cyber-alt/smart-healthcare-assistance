@@ -2,30 +2,34 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
+import { auth, provider } from "../../firebase.js";
+import { signInWithPopup } from "firebase/auth";
+import axios from "axios";
 
-// Register
+
+
+
+
+
+
 export const registerPatient = createAsyncThunk(
   "auth/register",
-  async (phone, thunkAPI) => {
-    try {
-      return await authService.register(phone);
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data || err.message);
-    }
+  async (data, thunkAPI) => {
+    return await authService.register(data);
   }
 );
 
-// Login
+
+
 export const loginPatient = createAsyncThunk(
   "auth/login",
-  async (phone, thunkAPI) => {
-    try {
-      return await authService.login(phone);
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data || err.message);
-    }
+  async (data, thunkAPI) => {
+    return await authService.login(data);
   }
 );
+
+
+
 
 // Create profile
 export const createPatientProfile = createAsyncThunk(
@@ -64,6 +68,36 @@ export const updatePatientProfile = createAsyncThunk(
   }
 );
 
+
+
+/* ================= REGISTER ================= */
+export const firebaseRegister = createAsyncThunk(
+  "auth/firebaseRegister",
+   async (_, { rejectWithValue }) => {
+    try {
+      console.log("hello")
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+          
+      const res = await axios.post(
+        " http://localhost:5000/api/auth/firebase",
+        { token: idToken }
+      );
+     
+
+      return res.data; // { user, token }
+    } catch (err) {
+  
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+
+);
+
+
+
+
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -85,9 +119,18 @@ const authSlice = createSlice({
       .addCase(registerPatient.fulfilled, (state, action) => {
         state.user = action.payload;
       })
-      .addCase(loginPatient.fulfilled, (state, action) => {
-        state.user = action.payload;
-      })
+      .addCase(loginPatient.pending, (state) => {
+  state.isLoading = true;
+})
+.addCase(loginPatient.fulfilled, (state, action) => {
+  state.isLoading = false;
+  state.user = action.payload;
+})
+.addCase(loginPatient.rejected, (state, action) => {
+  state.isLoading = false;
+  state.isError = true;
+  state.message = action.payload;
+})
       .addCase(createPatientProfile.fulfilled, (state, action) => {
         state.profile = action.payload;
       })
@@ -96,9 +139,25 @@ const authSlice = createSlice({
       })
       .addCase(updatePatientProfile.fulfilled, (state, action) => {
         state.profile = action.payload;
+      })
+
+       .addCase(firebaseRegister.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(firebaseRegister.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      })
+    
+      .addCase(firebaseRegister.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       });
+
   },
 });
 
-export const { logout } = authSlice.actions;
+export  const { logout } = authSlice.actions;
 export default authSlice.reducer;

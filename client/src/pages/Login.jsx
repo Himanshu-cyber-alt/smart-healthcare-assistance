@@ -4,78 +4,147 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginPatient } from "../features/auth/authSlice";
+import {firebaseRegister} from "../features/auth/authSlice"
 
 const Login = () => {
-  const [phone, setPhone] = useState("+911234567899");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
 
  
 
-  const handleLogin = async () => {
+
+
+
+
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+
+const handleLogin = async () => {
   try {
-    const response = await dispatch(loginPatient(phone)).unwrap(); 
-    
-    // store the returned payload
+    const res = await dispatch(
+      loginPatient({ email, password })
+    ).unwrap();
 
-    console.log("Patient data => ",response.patient.patient_id)
-    localStorage.setItem("patientMobile", phone);
+    localStorage.setItem("patientToken", res.token);
+    localStorage.setItem("patient_id", res.patient.patient_id);
+    localStorage.setItem("patient_email", email);
 
-    console.log(response.token)
-    // Make sure your backend returns a token in response
-    localStorage.setItem("patientToken", response.token); 
-    
-const  patientId = response.patient.patient_id;
-
-    localStorage.setItem("patient_id",patientId)
-
-       
-    navigate("/dashboard" ,{ state: {  patientId  } });
+    navigate("/dashboard");
   } catch (err) {
-    console.error(err);
-    alert(err || "Login failed ❌");
+    alert(err?.message || "Login failed ❌");
   }
 };
 
 
-  return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 to-sky-100">
-      {/* Background image overlay */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-20"
-        style={{
-          backgroundImage:
-            "url('https://images.pexels.com/photos/7722680/pexels-photo-7722680.jpeg')",
-        }}
-      ></div>
 
-      {/* Card */}
-      <div className="relative z-10 bg-white bg-opacity-90 rounded-2xl shadow-xl p-10 max-w-md w-full text-center">
-        <h2 className="text-3xl font-bold text-green-700 mb-6">
-          Patient Login
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Enter your registered phone number to access your dashboard.
-        </p>
+ const handleGoogleLogin = async () => {
+    try {
+      const resultAction = await dispatch(firebaseRegister());
 
-        <input
-          type="text"
-          placeholder="+91XXXXXXXXXX"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-6 focus:outline-none focus:ring-2 focus:ring-green-400"
-        />
+   
+      if (firebaseRegister.fulfilled.match(resultAction)) {
 
-        <button
-          onClick={handleLogin}
-          className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg shadow-md transition"
-        >
-          Login
-        </button>
+        
+        localStorage.setItem("patientToken", resultAction.payload.token);
+    localStorage.setItem("patient_id", resultAction.payload.user.patient_id);
+    localStorage.setItem("patient_email", resultAction.payload.user.email);
+        navigate("/dashboard");
+      } 
+     
+    } catch (err) {
+     console.log(err.message);
+    }
+  };
+
+
+
+
+ return (
+  <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-100 via-teal-100 to-sky-100">
+    
+    {/* Background image overlay */}
+    <div
+      className="absolute inset-0 bg-cover bg-center opacity-20"
+      style={{
+        backgroundImage:
+          "url('https://images.pexels.com/photos/7722680/pexels-photo-7722680.jpeg')",
+      }}
+    />
+
+    {/* Card */}
+    <div className="relative z-10 w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-10">
+      
+      {/* Header */}
+      <h2 className="text-3xl font-bold text-emerald-700 text-center">
+        Patient Login
+      </h2>
+      <p className="text-gray-600 text-center mt-2 mb-8">
+        Sign in to access your dashboard
+      </p>
+
+      {/* Email */}
+      <input
+        type="email"
+        placeholder="Email address"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full mb-4 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+      />
+
+      {/* Password */}
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full mb-6 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+      />
+
+      {/* Login button */}
+      <button
+        onClick={handleLogin}
+        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl shadow-md transition"
+      >
+        Login
+      </button>
+
+      {/* Divider */}
+      <div className="flex items-center my-6">
+        <div className="flex-grow h-px bg-gray-300" />
+        <span className="mx-3 text-gray-500 text-sm">OR</span>
+        <div className="flex-grow h-px bg-gray-300" />
       </div>
+
+      {/* Google login */}
+      <button
+        onClick={handleGoogleLogin}
+        className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-100 transition"
+      >
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google"
+          className="w-5 h-5"
+        />
+        <span className="font-medium text-gray-700">
+          Continue with Google
+        </span>
+      </button>
+
+      {/* Footer */}
+      <p className="text-center text-sm text-gray-500 mt-6">
+        Don’t have an account?{" "}
+        <span
+          onClick={() => navigate("/register")}
+          className="text-emerald-600 font-semibold cursor-pointer hover:underline"
+        >
+          Register
+        </span>
+      </p>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Login;

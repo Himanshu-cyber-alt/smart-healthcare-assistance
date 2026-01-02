@@ -49,7 +49,7 @@ const Doctors = () => {
               <div className="mt-4 flex gap-3">
                 <button
                   onClick={() => handleBookAppointment(doctor)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
+                  className="bg-black hover:shadow-green-900 text-white px-4 py-2 rounded-lg shadow"
                 >
                   Book Appointment
                 </button>

@@ -8,7 +8,6 @@ import Home from "./pages/Home";
 
 // patient pages
 import PatientRegister from "./pages/PatientRegister";
-import PatientOtpVerify from "./pages/PatientOtpVerify";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import PatientDashboard from "./pages/PatientDashboard";
@@ -23,6 +22,7 @@ import AIAssistant from "./pages/AIAssistant";
 import Appointment from "./pages/AppointmentTab"
 import MyAppointment from "./pages/MyAppointment";
 import TakeInfo from "./pages/TakeInfo";
+import DoctorHome from "./DoctorPages/DoctorHome";
 
 function App() {
 
@@ -35,7 +35,7 @@ function App() {
 
         {/* Patient routes */}
         <Route path="/register" element={<PatientRegister />} />
-        <Route path="/verify-otp" element={<PatientOtpVerify />} />
+        
         <Route path="/login" element={<Login />} />
 
          <Route
@@ -74,6 +74,7 @@ function App() {
         <Route path="/doctor/register" element={<DoctorRegister />} />
         <Route path="/doctor/login" element={<DoctorLogin />} />
         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+        <Route path="/doctor-home" element={<DoctorHome />}/>
       </Routes>
     </Router>
   );

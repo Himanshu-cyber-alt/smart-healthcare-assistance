@@ -29,16 +29,21 @@ const DoctorLogin = () => {
         throw new Error(data.message || "Login failed");
       }
 
+      console.log(data)
       // store token (for later API calls)
       localStorage.setItem("doctorToken", data.token);
     const email = formData.email;
     // console.log(email)
      sessionStorage.setItem("email", email);
 
+     localStorage.setItem("doctor_email", email);
+
       // redirect to Doctor Dashboard
-      navigate("/doctor/dashboard");
+    //  navigate("/doctor/dashboard");
+    navigate("/doctor-home")
 
     } catch (err) {
+      console.log(err)
       setMessage(err.message);
     }
   };

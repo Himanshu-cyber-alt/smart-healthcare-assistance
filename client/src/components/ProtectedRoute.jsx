@@ -16,9 +16,8 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("patientToken"); // only for patients
+const token = localStorage.getItem("patientToken");
 
-  console.log("Protected Routes => ",token)
 
   if (!token) {
     return <Navigate to="/login" replace />; // redirect to patient login

@@ -19,14 +19,9 @@ export default function MyAppointment() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const patientId = localStorage.getItem("patient_id");
-        if (!patientId) {
-          setError("No patient ID found.");
-          setLoading(false);
-          return;
-        }
-
-        const res = await fetch(`http://localhost:5000/api/appointments/${patientId}`);
+        const email = localStorage.getItem("email");
+     
+        const res = await fetch(`http://localhost:5000/api/doctorappointments/${email}`);
         if (!res.ok) throw new Error("Failed to fetch appointments.");
         
         const data = await res.json();
